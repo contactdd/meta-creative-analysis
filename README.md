@@ -1,4 +1,4 @@
-# 🎯 Analyse créative Meta — le skill Claude Code de Data Détective
+# Analyse créative Meta — le skill Claude Code de Data Détective
 
 Un skill [Claude Code](https://claude.com/claude-code) qui transforme les données de ton compte **Meta Ads (Facebook / Instagram)** en un **rapport de décision** : quelles créatives couper, lesquelles scaler, lesquelles surveiller — et lesquelles fatiguent avant qu'il ne soit trop tard.
 
