@@ -128,6 +128,10 @@ def normalize(ads):
             "cpc": _num(a, "cpc"),
             "conv": int(_num(a, "purchases", "actions:omni_purchase") or 0),
             "roas": _num(a, "roas", "purchase_roas"),
+            # lectures 3 s (hook) — dispo au niveau ad de façon best-effort ; le
+            # champ officiel est adset-level. Plusieurs alias possibles selon le canal.
+            "hook3s": _num(a, "hook3s", "3_second_video_plays",
+                           "video_3_sec_watched_actions", "video_3s"),
             "days": days_active(a),
             "raw": a,
         })
@@ -253,6 +257,11 @@ def build_creas(ads, campaigns, windows=None):
         }
         if conv > 0 and lclk > 0: d["cvr"] = round(conv / lclk * 100, 2)
         if roas and conv > 0: d["aov"] = round(cval / conv, 0)
+        # Hook rate = lectures 3 s / impressions, VIDÉO uniquement, quel que soit
+        # l'objectif de campagne. Absent (image/carrousel, ou 3 s non fournis) -> pas
+        # de clé "hook" -> le template affiche "n/a".
+        if d["fmt"] == "video" and r["hook3s"] and r["imp"] > 0:
+            d["hook"] = round(r["hook3s"] / r["imp"] * 100, 1)
         creas.append(d)
     creas.sort(key=lambda c: -c["spend"])
     return creas

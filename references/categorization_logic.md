@@ -112,6 +112,8 @@ Le format se déduit de la structure du creative Meta, pas d'un champ dédié : 
 
 Certains KPIs n'ont de sens que pour certains formats :
 - **Hook rate** (lectures 3s / impressions) et **taux de complétion vidéo** : vidéo uniquement. Ne jamais afficher pour une image ou un carrousel.
+  - **Le hook rate est affiché sur CHAQUE créative vidéo, quel que soit l'objectif de campagne** (acquisition, retargeting, notoriété) — pas seulement en notoriété. Il apparaît directement sur la ligne de la créative dans le tableau (« Hook X % ») et dans le détail. `analyze.py` le calcule dès que la donnée 3 s est présente sur l'ad (`hook3s` / `3_second_video_plays` / `video_3_sec_watched_actions`), sinon la clé `hook` est absente et le template affiche « n/a ».
+  - **Piège d'accès (MCP Meta officiel)** : au niveau `ad`, le champ 3 s officiel (`3_second_video_plays`) est **adset-level** et rejeté si demandé explicitement ; `video_continuous_2_sec_watched_actions` remonte souvent « Not available ». Les 3 s peuvent apparaître en « bonus » au niveau ad quand on demande `video_p100_watched_actions` dans un jeu de champs large, mais **de façon non fiable**. Pour un hook garanti sur toutes les périodes, pull les 3 s au **niveau adset** (où c'est supporté) et mappe adset→ad, ou accepte « n/a » sur les fenêtres où Meta ne les fournit pas.
 - **Swipe rate** carrousel : non exposé nativement par l'API (calcul dérivé des vues de cartes). **Écarté du rapport par défaut** — dépend de breakdowns pas toujours disponibles, alourdit la lecture, et relève de l'analyse fine à plus forte valeur. À réserver à une version calibrée.
 
 ## Étape 5 — Garde-fou tracking et mode dégradé

@@ -310,7 +310,7 @@ function fatigueCell(c){if(c.fatigue===null)return`<span class="fatigue fat-na">
 function creaRow(c,uid){
   const cc=CAT[c.cat];
   return `<tr class="crow" data-uid="${uid}">
-    <td><div class="creacell">${thumb(c)}<div><div class="cname">${c.name}</div><div class="cmeta">${FMT_LABEL[c.fmt]} · ${ageTxt(c.days)} <a class="clink" href="#" onclick="return false">Voir ↗</a></div></div></div></td>
+    <td><div class="creacell">${thumb(c)}<div><div class="cname">${c.name}</div><div class="cmeta">${FMT_LABEL[c.fmt]} · ${ageTxt(c.days)}${c.fmt==="video"?` · <b style="color:var(--blue-dark)">Hook ${c.hook!=null?c.hook+" %":"n/a"}</b>`:""} <a class="clink" href="#" onclick="return false">Voir ↗</a></div></div></div></td>
     <td><span class="badge ${cc.cls}">${cc.label}</span></td>
     <td>${fatigueCell(c)}</td>
     <td class="num">${eur(c.spend)}</td>
