@@ -11,7 +11,7 @@ Un skill [Claude Code](https://claude.com/claude-code) qui transforme les donné
 À partir de ta donnée Meta Ads, le skill produit un **fichier HTML autoportant** (un seul fichier, à ouvrir dans le navigateur) qui contient :
 
 - une **Overview compte** : budget, CAC moyen, distribution des créatives (Winner / Improve / Neutral / Flop), pipeline par objectif ;
-- un **onglet par objectif** (acquisition, notoriété, retargeting) avec KPIs adaptés, nuage de points dépense × efficacité, tableau triable, et **2 à 5 recommandations business** ;
+- un **onglet par objectif** (acquisition, notoriété, retargeting) avec KPIs adaptés, **hook rate affiché sur chaque créative vidéo** (quel que soit l'objectif), nuage de points dépense × efficacité, tableau triable, et **2 à 5 recommandations business** ;
 - une **détection de fatigue** créative (dépense qui reflue + fréquence qui monte + coût qui grimpe) ;
 - un **sélecteur de période** 7 / 14 / 30 jours qui recalcule tout.
 
@@ -59,10 +59,11 @@ Dans Claude Code, lance :
 ## Comment ça marche (sous le capot)
 
 ```
-pull data  →  scripts/analyze.py  →  scripts/build_report.py  →  rapport.html
+dumps MCP bruts  →  scripts/collect.py  →  scripts/analyze.py  →  scripts/build_report.py  →  rapport.html
 ```
 
-- **`scripts/analyze.py`** — le moteur de calcul : normalisation, catégorisation par objectif, détection de fatigue. Les seuils par défaut sont en tête de fichier, modifiables.
+- **`scripts/collect.py`** — assemble `ads/campaigns/windows.json` à partir des sorties MCP **collées verbatim** (aucun reformatage), classe acq/rtg/noto à la nomenclature, et imprime une QA (réconciliation dépense, angles morts tracking, couverture hook). Supprime la transcription manuelle.
+- **`scripts/analyze.py`** — le moteur de calcul : normalisation, catégorisation par objectif, détection de fatigue, hook rate. Les seuils par défaut sont en tête de fichier, modifiables.
 - **`scripts/build_report.py`** — injecte les données dans le template brandé.
 - **`assets/report_template.html`** — le design system Data Détective (autoportant).
 - **`references/`** — la logique de catégorisation et le mapping des 3 canaux de données.
@@ -76,7 +77,8 @@ meta-creative-analysis/
 │   ├── data_access.md              # les 3 canaux de données + mapping des champs
 │   └── categorization_logic.md     # le moteur d'analyse (seuils, branches, fatigue)
 ├── scripts/
-│   ├── analyze.py                  # calcul : catégories + fatigue + KPIs
+│   ├── collect.py                  # assemble ads/campaigns/windows depuis les dumps MCP bruts + QA
+│   ├── analyze.py                  # calcul : catégories + fatigue + KPIs (dont hook rate)
 │   └── build_report.py             # rendu HTML
 └── assets/
     └── report_template.html        # template brandé Data Détective
