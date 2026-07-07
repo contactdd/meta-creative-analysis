@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# macOS
+.DS_Store
+
+# Artefacts générés lors d'un run (ne pas versionner la donnée des comptes)
+*_report.html
+report.html
+creas*.json
+meta*.json
+ads*.json
+campaigns*.json
+windows*.json
+raw_*.json
+out/
