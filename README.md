@@ -1,6 +1,6 @@
 # 🎯 Analyse créative Meta — le skill Claude Code de Data Détective
 
-Un skill [Claude Code](https://claude.com/claude-code) qui transforme les données de ton compte **Meta Ads (Facebook / Instagram)** en un **rapport de décision brandé** : quelles créatives couper, lesquelles scaler, lesquelles surveiller — et lesquelles fatiguent avant qu'il ne soit trop tard.
+Un skill [Claude Code](https://claude.com/claude-code) qui transforme les données de ton compte **Meta Ads (Facebook / Instagram)** en un **rapport de décision** : quelles créatives couper, lesquelles scaler, lesquelles surveiller — et lesquelles fatiguent avant qu'il ne soit trop tard.
 
 > Offert par **[Data Détective](https://datadetective.fr)**. Tu l'installes, tu le lances sur ton compte, tu obtiens le rapport en quelques minutes.
 
@@ -15,7 +15,7 @@ Un skill [Claude Code](https://claude.com/claude-code) qui transforme les donné
 - une **détection de fatigue** créative (dépense qui reflue + fréquence qui monte + coût qui grimpe) ;
 - un **sélecteur de période** 7 / 14 / 30 jours qui recalcule tout.
 
-La logique n'est pas générique : **chaque créative est jugée par rapport à l'objectif de sa campagne** (une créa de notoriété ne se juge pas au coût par vente), et tous les ratios se recalculent sur les totaux agrégés.
+La logique n'est pas générique : **chaque créative est jugée par rapport à l'objectif de sa campagne** (une créa de notoriété ne se juge pas au coût d'acquisition), et tous les ratios se recalculent sur les totaux agrégés.
 
 ## Ce qu'il te faut
 
@@ -23,7 +23,7 @@ La logique n'est pas générique : **chaque créative est jugée par rapport à 
 2. **Python 3** (les scripts n'utilisent que la bibliothèque standard, aucune dépendance à installer).
 3. **Une source de données Meta Ads** — au choix :
    - un **MCP Meta** branché dans Claude Code (Meta officiel, Pipeboard, ou équivalent), **ou**
-   - un connecteur **Supermetrics**, **ou**
+   - un connecteur **Supermetrics**, **Funnel**, **ou** **Windsor**
    - un **export Ads Manager** (CSV, niveau *ad*).
 
 > **Pas encore de setup data ?** Pas de panique — [réserve un audit accompagné avec Data Détective](https://cal.com/robin-guedoit-xukrdi/quick-call), on branche ta donnée proprement et on fait l'analyse avec toi.
