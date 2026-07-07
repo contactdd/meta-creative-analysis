@@ -75,15 +75,31 @@ La fatigue est un axe **séparé** de la catégorie, pas une cinquième catégor
 
 ### Phase 7 — Génération du rapport
 
-Deux étapes. D'abord produire le `creas.json` via le moteur de calcul, puis l'injecter dans le template :
+Trois étapes : collecter (assembler les dumps MCP bruts), calculer, rendre.
 
 ```bash
+# 0. COLLECTE — coller les sorties MCP VERBATIM dans des fichiers, puis assembler.
+#    Supprime la transcription/reformatage à la main (le vrai goulot) + QA auto.
+#    Un dump = réponse MCP complète {"ad_entities":"[...]"}, un array, ou une liste.
+python scripts/collect.py --out-dir . \
+  --ads dump_ads_30.json \
+  --campaigns dump_campaigns.json \
+  --window-recent dump_ads_7d.json --window-prior dump_ads_prior7d.json \
+  --hook dump_hook.json            # optionnel (lectures 3 s)
+# -> écrit ads.json, campaigns.json, windows.json + imprime la QA sur stderr.
+
 # 1. Calcul (catégories + fatigue + KPIs) — voir schéma des entrées en tête d'analyze.py
 python scripts/analyze.py ads.json campaigns.json windows.json creas.json
 
 # 2. Rendu HTML brandé
 python scripts/build_report.py creas.json meta.json output.html
 ```
+
+> **Production optimisée (temps d'output).** Le poste le plus lent n'est pas le pull mais la **transcription manuelle** des JSON — la supprimer accélère *et* fiabilise (moins de fautes). Régles :
+> 1. **Coller la sortie MCP brute** dans les fichiers `dump_*.json` (zéro nettoyage FR : `frnum` gère « 2 141,63 € »). `collect.py` désencapsule et fusionne.
+> 2. **Lire la QA de `collect.py`** (créas, réconciliation dépense créas vs total campagne, campagnes sans conversion = angle mort tracking, couverture hook, routage acq/rtg/noto) *avant* de générer — elle attrape ce que l'œil rate.
+> 3. **Minimiser les pulls sans amputer le livrable** : un pull ad-level 30 j avec `time_increment=7` renvoie les segments hebdo → il sert **et** au pull principal **et** aux 2 fenêtres de fatigue (2 dernières semaines), en un seul appel. ⚠️ **Garde-fou qualité** : `spend/impressions/clics/conversions` se somment entre semaines, **mais pas le `reach`** (dédupliqué). Ne jamais reconstruire `reach`/`fréquence` 30 j en sommant les semaines — pour la fréquence exacte (fatigue, saturation noto), garder le pull 30 j à plat. Le hebdo sert la fatigue et la dérivation spend/CPM/CTR/CAC des périodes, pas la fréquence.
+> 4. **Cacher la structure du compte** (mapping campagne→objectif, vertical/high-ticket, canal MCP) entre deux runs : la découverte ne se refait pas.
 
 Le template `assets/report_template.html` porte tout le design system Data Détective (Figtree, bleus DD, structure onglets, scatter, courbes, tableau). Ne pas régénérer le HTML à la main : injecter les données dans le template via le script. Le template gère l'Overview (KPIs compte, distribution filtrable, pipeline par objectif avec % de budget, recommandations transverses) et un onglet par objectif (KPIs adaptés avec variation vs période précédente et seuil de référence, sélecteur de métrique temporel avec granularité jour/semaine/mois, scatter dépense × efficacité, tableau créatives triable avec miniature et lien, 2 à 5 recommandations).
 
@@ -105,6 +121,7 @@ Le template `assets/report_template.html` porte tout le design system Data Déte
 
 - `references/categorization_logic.md` — le moteur d'analyse : routage par objectif, garde-fous, les 3 branches de catégorisation, la fatigue, les seuils par défaut. À lire à chaque analyse.
 - `references/data_access.md` — les 3 canaux d'accès (MCP natif, Supermetrics, export), le mapping de champs par canal, les formules d'agrégation. À lire en phase 1, après avoir demandé le canal au consultant.
+- `scripts/collect.py` — assemble `ads.json` / `campaigns.json` / `windows.json` à partir des sorties MCP **brutes** (collées verbatim), classe acq/rtg/noto à la nomenclature, et imprime une QA. Supprime la transcription manuelle. À lancer en phase 7, étape 0.
 - `scripts/analyze.py` — le moteur de calcul : normalise la donnée pullée, catégorise (winner/improve/neutral/flop/learn), détecte la fatigue (2 fenêtres), agrège les KPIs, et produit `creas.json`. Toute la logique de calcul vit ici (seuils par défaut modifiables en tête de fichier). À lancer en phase 7, étape 1.
 - `assets/report_template.html` — le template HTML brandé. Ne pas éditer à la main, injecter les données via le script.
 - `scripts/build_report.py` — injecte `creas.json` dans le template et génère le rapport final. À lancer en phase 7, étape 2.
